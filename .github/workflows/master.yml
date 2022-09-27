@@ -1,0 +1,34 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+
+
+jobs:
+  deploy-hml:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'master' }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Push to AWS ECR
+        uses: kciter/aws-ecr-action@v4
+        with:
+          access_key_id: ${{ secrets.AWS_ACCESS_KEY }}
+          secret_access_key: ${{ secrets.AWS_SECRET_KEY }}
+          account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+          repo: verzel_backend
+          region: ${{ secrets.AWS_REGION }}
+
+      - name: Update Container on AWS EC2
+        uses: peterkimzz/aws-ssm-send-command@v1.1.1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          instance-ids: ${{ secrets.AWS_EC2 }}
+          command: sh update-containers.sh -y
+
