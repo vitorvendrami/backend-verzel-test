@@ -7,7 +7,6 @@ from services.CarsService import CarsService
 
 
 @app.route("/cars", methods=["get"])
-@jwt_required()
 def get_all_cars() -> Response:
     cars_json = CarsService.return_all_cars()
     return rp.generate_basic_response(content_value=cars_json)
