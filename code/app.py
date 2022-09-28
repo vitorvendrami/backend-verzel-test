@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
@@ -14,6 +16,9 @@ app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
 bcrypt = Bcrypt(app)
+
+HOST = os.environ.get('HOST', default='0.0.0.0')
+DEBUG = bool(int(os.environ.get('DEBUG', default='1')))
 
 app.config["SECRET_KEY"] = "please-remember-to-change-me"
 app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
@@ -41,4 +46,5 @@ from routes.CarsRoute import *
 # from db import *
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host=HOST, debug=DEBUG)
+

@@ -21,7 +21,7 @@ services:
     container_name: api-service
     restart: unless-stopped
     env_file:
-      - env/env.txt
+      - .env
     ports:
       - "5000:5000"
     command: python app.py
