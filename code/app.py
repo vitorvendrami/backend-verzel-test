@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask_bcrypt import Bcrypt
@@ -9,6 +10,7 @@ from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__)
+CORS(app)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 app.config.from_pyfile("config.py")
 
