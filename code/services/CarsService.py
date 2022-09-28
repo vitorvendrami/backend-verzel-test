@@ -11,7 +11,6 @@ bucket_name = S3_BUCKET
 
 
 class CarsService:
-
     @staticmethod
     def filter_car_by_name(name):
         """Returns a car instance given it name"""
@@ -49,7 +48,7 @@ class CarsService:
                 name=name,
                 brand=brand,
                 model=model,
-                picture_s3_url="{}{}".format(app.config["S3_LOCATION"], file_name)
+                picture_s3_url="{}{}".format(app.config["S3_LOCATION"], file_name),
             )
             db.session.add(car)
 
@@ -59,9 +58,7 @@ class CarsService:
         else:
             # upload files to s3
             upload, file_url = FileManager.upload_file_to_s3(
-                file,
-                file_name,
-                bucket_name
+                file, file_name, bucket_name
             )
 
             # save
@@ -72,7 +69,9 @@ class CarsService:
             return False, None
 
     @staticmethod
-    def update_car_instance_by_id(id: int, name: str, brand: str, model: str, file: dict):
+    def update_car_instance_by_id(
+        id: int, name: str, brand: str, model: str, file: dict
+    ):
         """Updates a car instance given its id"""
 
         extension = file.filename[-4:]
@@ -97,9 +96,7 @@ class CarsService:
             if file:
                 old_file_name = car_obj.picture_s3_url.split(".com/")[1]
                 renewed, file_url = FileManager.renew_file_from_s3(
-                    file,
-                    old_file_name=old_file_name,
-                    new_file_name=new_file_name
+                    file, old_file_name=old_file_name, new_file_name=new_file_name
                 )
 
             car_obj.picture_s3_url = file_url
@@ -124,5 +121,5 @@ class CarsService:
             return {"message": "success deleting obj"}
 
         except Exception as e:
-            print('Erro', e)
+            print("Erro", e)
             return {}

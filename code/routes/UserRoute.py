@@ -10,7 +10,7 @@ from services.UserService import UserService
 users_model = Users
 
 
-@app.route('/user/<id>', methods=["get"])
+@app.route("/user/<id>", methods=["get"])
 @jwt_required()
 def get_user(id: int) -> Response:
     """Retriev User by id"""
@@ -26,6 +26,8 @@ def register_user() -> Response:
     created, user = UserService.create_user(**body)
 
     if created:
-        return rp.generate_basic_response(user, status=201, message="Criado com sucesso")
+        return rp.generate_basic_response(
+            user, status=201, message="Criado com sucesso"
+        )
 
     return rp.generate_default_400_response()

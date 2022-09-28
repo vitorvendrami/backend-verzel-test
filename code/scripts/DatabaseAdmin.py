@@ -3,7 +3,6 @@ from mysql.connector import errorcode
 
 
 class DatabaseAdmin:
-
     @staticmethod
     def create_database():
         """Create database DB if it's not exists"""
@@ -11,13 +10,11 @@ class DatabaseAdmin:
         try:
             print("Conectando...")
             conn = mysql.connector.connect(
-                host='127.0.0.1',
-                user='root',
-                password='password'
+                host="127.0.0.1", user="root", password="password"
             )
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-                print('Error on username or password')
+                print("Error on username or password")
             else:
                 print(err)
 
@@ -28,10 +25,11 @@ class DatabaseAdmin:
         cursor.execute("CREATE DATABASE `db`;")
 
         cursor.execute("USE `db`;")
-        print('conectado')
+        print("conectado")
 
     @staticmethod
     def create_all_tables(db):
+        """Create tables for the new database"""
         try:
             db.create_all()
         except Exception as error:

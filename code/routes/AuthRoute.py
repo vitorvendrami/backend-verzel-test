@@ -1,9 +1,13 @@
 import json
 
-from flask import  request, jsonify
+from flask import request, jsonify
 from datetime import datetime, timedelta, timezone
-from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, \
-    unset_jwt_cookies, jwt_required, JWTManager
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt,
+    get_jwt_identity,
+    unset_jwt_cookies,
+)
 
 from app import app, csrf
 from models.UserModel import Users
@@ -11,6 +15,7 @@ from models.UserModel import Users
 
 @app.after_request
 def refresh_expiring_jwts(response):
+    """Refresh JWT Token in 30min"""
     try:
         exp_timestamp = get_jwt()["exp"]
         now = datetime.now(timezone.utc)
@@ -27,9 +32,10 @@ def refresh_expiring_jwts(response):
         return response
 
 
-@app.route('/token', methods=["POST"])
+@app.route("/token", methods=["POST"])
 @csrf.exempt
 def create_token():
+    """Creates a JWT Token"""
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
@@ -46,6 +52,7 @@ def create_token():
 @app.route("/logout", methods=["POST"])
 @csrf.exempt
 def logout():
+    """Logout, Unset the JWT Token"""
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response

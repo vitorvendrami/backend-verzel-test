@@ -2,6 +2,8 @@ from app import db
 
 
 class Cars(db.Model):
+    """Cars Model"""
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
     brand = db.Column(db.String(50), nullable=False)
@@ -14,5 +16,5 @@ class Cars(db.Model):
             "name": self.name,
             "brand": self.brand,
             "model": self.model,
-            "picture_s3_url": self.picture_s3_url
+            "picture_s3_url": self.picture_s3_url,
         }
