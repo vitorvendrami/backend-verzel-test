@@ -8,7 +8,31 @@ on:
 
 
 jobs:
-  deploy-hml:
+  Lint:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    needs: Test
+
+    steps:
+      - name: Git branch name
+        id: git-branch-name
+        uses: EthanSK/git-branch-name-action@v1
+
+      - name: Echo the branch name
+        run: echo "Branch name ${GIT_BRANCH_NAME}"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.git-branch-name.outputs.branch }}
+
+      - name: Requirements
+        run: python -m pip install -r "code/requirements.txt"
+
+      - name: Flake8 process
+        run: flake8 lastmile/
+
+  Build:
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
     steps:
@@ -32,3 +56,37 @@ jobs:
           instance-ids: ${{ secrets.AWS_EC2 }}
           command: sh update-containers.sh -y
 
+  Notifications-Failure:
+      runs-on: ubuntu-latest
+      needs: Lint
+      if: ${{ failure() }}
+
+      steps:
+        - uses: actions/checkout@v2
+        - name: Slack Notification
+          uses: rtCamp/action-slack-notify@v2
+          env:
+            SLACK_CHANNEL: incidents
+            SLACK_WEBHOOK: ${{ secrets.INCIDENT_SLACK_WEBHOOK }}
+            SLACK_COLOR: '#e80c0f'
+            SLACK_LINK_NAMES: true
+            SLACK_MESSAGE: 'Build Failed'
+            SLACK_TITLE: 'FLASK BACKEND NOTIFICATION FAILURE'
+            SLACK_FOOTER: 'This is an auto generated message from github actions'
+
+  Notifications-Success:
+      runs-on: ubuntu-latest
+      needs: Lint
+      if: ${{ success() }}
+
+      steps:
+        - uses: actions/checkout@v2
+        - name: Slack Notification
+          uses: rtCamp/action-slack-notify@v2
+          env:
+            SLACK_CHANNEL: deploys
+            SLACK_WEBHOOK: ${{ secrets.DEPLOY_SLACK_WEBHOOK }}
+            SLACK_LINK_NAMES: true
+            SLACK_MESSAGE: 'Build Success'
+            SLACK_TITLE: 'FLASK BACKEND NOTIFICATION SUCCESS'
+            SLACK_FOOTER: 'This is an auto generated message from github actions'
