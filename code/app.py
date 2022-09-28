@@ -30,7 +30,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 jwt = JWTManager(app)
 
 # S3 bucket configuration
-S3_BUCKET = os.environ.get("S3_BUCKET")
+S3_BUCKET = os.environ.get("S3_BUCKET", default="vitor-vendrami-verzel")
 app.config["S3_BUCKET"] = S3_BUCKET
 app.config["S3_KEY"] = os.environ.get("S3_KEY")
 app.config["S3_SECRET"] = os.environ.get("S3_SECRET")

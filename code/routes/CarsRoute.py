@@ -23,6 +23,10 @@ def get_car_by_id(id):
 @csrf.exempt
 @jwt_required()
 def register_car():
+
+    if "file" not in request.files:
+        return rp.generate_default_400_response(message="Missing picture!")
+
     body = {
         "name": request.form.get("name", None),
         "brand": request.form.get("brand", None),

@@ -33,7 +33,7 @@ class ResponseHandler:
         return Response(json.dumps(body), status=status, mimetype=DEFAULT_MIME_TYPE)
 
     @staticmethod
-    def generate_default_400_response():
+    def generate_default_400_response(message=""):
         """Generate 400 default Response for the API"""
-        body = {"error": ResponseEnum.BASE_NOT_FOUND_400.value}
+        body = {"error": ResponseEnum.BASE_NOT_FOUND_400.value, "message": message}
         return Response(json.dumps(body), status=400, mimetype=DEFAULT_MIME_TYPE)

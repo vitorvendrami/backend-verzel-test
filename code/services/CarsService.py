@@ -4,10 +4,9 @@ from app import db, app
 from managers.FileManager import FileManager
 
 from models.CarsModel import Cars
-from app import S3_BUCKET
 from validators.Validators import CarsValidator
 
-bucket_name = S3_BUCKET
+bucket_name = app.config["S3_BUCKET"]
 
 
 class CarsService:
@@ -66,7 +65,7 @@ class CarsService:
                 db.session.commit()
                 return True, car.to_json()
 
-            return False, None
+            return False, file_url
 
     @staticmethod
     def update_car_instance_by_id(
