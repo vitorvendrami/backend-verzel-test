@@ -26,7 +26,7 @@ jobs:
           ref: ${{ steps.git-branch-name.outputs.branch }}
 
       - name: Requirements
-        run: python -m pip install -r "code/requirements.txt"
+        run: python -m pip install -r "requirements.txt"
 
       - name: Flake8 process
         run: flake8 lastmile/
