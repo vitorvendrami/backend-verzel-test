@@ -17,9 +17,7 @@ services:
     network_mode: host
 
   api-service:
-    build:
-      dockerfile: Dockerfile
-      context: .
+    image: 709256896859.dkr.ecr.us-east-2.amazonaws.com/verzel_backend:latest
     container_name: api-service
     restart: unless-stopped
     env_file:

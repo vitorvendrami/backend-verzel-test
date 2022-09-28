@@ -1,4 +1,3 @@
-import json
 from flask import Response, request
 from flask_jwt_extended import jwt_required
 
@@ -13,16 +12,16 @@ users_model = Users
 
 @app.route('/user/<id>', methods=["get"])
 @jwt_required()
-def get_user_by_id(id: int) -> Response:
+def get_user(id: int) -> Response:
+    """Retriev User by id"""
     user_json = UserService.return_user_by_id(id)
     return rp.generate_basic_response(content_value=user_json)
 
 
-# Cadastrar
 @app.route("/user/register", methods=["POST"])
 @csrf.exempt
-@jwt_required()
-def register_user():
+def register_user() -> Response:
+    """User Creation Route"""
     body = request.get_json()
     created, user = UserService.create_user(**body)
 
