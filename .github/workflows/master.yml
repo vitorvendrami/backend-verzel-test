@@ -29,7 +29,7 @@ jobs:
         run: python -m pip install flake8
 
       - name: Flake8 process
-        run: flake8 lastmile/
+        run: flake8 code/
 
   Build:
     runs-on: ubuntu-latest
