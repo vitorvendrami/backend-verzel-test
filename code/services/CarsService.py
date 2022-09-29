@@ -99,9 +99,6 @@ class CarsService:
     ):
         """Updates a car instance given its id"""
 
-        extension = photo.filename[::-1].split('.')[0][::-1]
-        new_file_name = FileManager.generate_new_protected_file_name(f".{extension}")
-
         # get the current instance
         car_obj = CarsService.filter_car_by_id(id)
 
@@ -131,6 +128,9 @@ class CarsService:
                 car_obj.category_id = int(category_id)
 
             if photo != "":
+                extension = photo.filename[::-1].split('.')[0][::-1]
+                new_file_name = FileManager.generate_new_protected_file_name(f".{extension}")
+
                 old_file_name = car_obj.photo.split(".com/")[1]
                 renewed, file_url = FileManager.renew_file_from_s3(
                     photo, old_file_name=old_file_name, new_file_name=new_file_name
