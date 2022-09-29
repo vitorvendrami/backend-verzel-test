@@ -53,7 +53,7 @@ class CarsService:
             # make name validation
             CarsValidator(title).validate_unique_keys()
 
-            extension = photo.filename[-4:]
+            extension = photo.filename[::-1].split('.')[0][::-1]
             file_name = FileManager.generate_new_protected_file_name(extension)
 
             # creates the instance of the car
@@ -99,7 +99,7 @@ class CarsService:
     ):
         """Updates a car instance given its id"""
 
-        extension = photo.filename[-4:]
+        extension = photo.filename[::-1].split('.')[0][::-1]
         new_file_name = FileManager.generate_new_protected_file_name(extension)
 
         # get the current instance
