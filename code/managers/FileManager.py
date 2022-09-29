@@ -24,7 +24,9 @@ class FileManager:
         return file_name + extension
 
     @staticmethod
-    def upload_file_to_s3(file, file_name, bucket_name=default_s3_bucket, acl='public-read'):
+    def upload_file_to_s3(
+        file, file_name, bucket_name=default_s3_bucket, acl="public-read"
+    ):
         """
         Uploads a file for s3
         Docs: http://boto3.readthedocs.io/en/latest/guide/s3.html

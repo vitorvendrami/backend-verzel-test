@@ -5,16 +5,57 @@ class Cars(db.Model):
     """Cars Model"""
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True, nullable=False)
-    brand = db.Column(db.String(50), nullable=False)
-    model = db.Column(db.String(50), nullable=False)
-    picture_s3_url = db.Column(db.String(255), nullable=False)
+    title = db.Column(
+        db.String(50), unique=True, nullable=False, default="SUZUKI VITARA 4YOU"
+    )
+    description = db.Column(db.String(100), default="This is a brand new car")
+    photo = db.Column(db.String(100), nullable=False)
+    year = db.Column(db.Integer, nullable=True, default=2022)
+    km = db.Column(db.Integer, nullable=True, default=0)
+    city = db.Column(db.String(100), default="Sao Paulo")
+    price = db.Column(db.Integer, nullable=True, default=10000)
+    category_id = db.Column(db.Integer, nullable=True, default=1)
+
+    def get_category_json(self, category_id):
+        """Maps a category given it's id"""
+        CATEGORY_MAP = {
+            1: "SUV",
+            2: "HATCH",
+            3: "CROSSOVER",
+            4: "CONVERTIBLE",
+            5: "SEDAN",
+        }
+
+        category = {"id": category_id, "label": CATEGORY_MAP[category_id]}
+
+        return category
 
     def to_json(self):
+        """
+          {
+            "id": 4,
+            "title": "Mercedes Benz C 180 CGI EXCLUSIVE",
+            "description": "Macarrão spaghetti com frutos-do-mar e especíarias, especialidade da cozinha. Atenção: Contém camarão e outros frutos-do-mar!",
+            "photo": "https://images.kavak.services/br/assets/images/vip/badgets/svg/promotion-status.svg",
+            "year": 2015,
+            "km": 400,
+            "city": "São Paulo",
+            "price": 4,
+            "category": {
+              "id": 2,
+              "label": "SUV"
+            }
+          },
+        :return:
+        """
         return {
             "id": self.id,
-            "name": self.name,
-            "brand": self.brand,
-            "model": self.model,
-            "picture_s3_url": self.picture_s3_url,
+            "title": self.title,
+            "description": self.description,
+            "photo": self.photo,
+            "year": self.year,
+            "km": self.km,
+            "city": self.city,
+            "price": self.price,
+            "category": self.get_category_json(self.category_id),
         }

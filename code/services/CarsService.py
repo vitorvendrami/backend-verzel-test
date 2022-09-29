@@ -11,9 +11,9 @@ bucket_name = app.config["S3_BUCKET"]
 
 class CarsService:
     @staticmethod
-    def filter_car_by_name(name):
-        """Returns a car instance given it name"""
-        return Cars.query.filter_by(name=name).first()
+    def filter_car_by_title(title):
+        """Returns a car instance given it title"""
+        return Cars.query.filter_by(title=title).first()
 
     @staticmethod
     def filter_car_by_id(id):
@@ -21,7 +21,7 @@ class CarsService:
         return Cars.query.filter_by(id=id).first()
 
     @staticmethod
-    def return_all_cars():
+    def return_all_cars_at_json():
         """Retriev all cars from the database"""
         cars_objects = Cars.query.all()
         json_of_cars = [car.to_json() for car in cars_objects]
@@ -29,35 +29,53 @@ class CarsService:
         return json_of_cars
 
     @staticmethod
-    def create_car(name: str, brand: str, model: str, file: dict):
+    def return_all_cars_ordered_by_price():
+        """Retriev all cars from the database ordered by price"""
+        cars_objects = Cars.query.order_by(Cars.price).all()
+        json_of_cars = [car.to_json() for car in cars_objects]
+        return json_of_cars
+
+    @staticmethod
+    def create_car(
+        title: str,
+        description: str,
+        photo: dict,
+        year: int,
+        km: int,
+        city: str,
+        price: int,
+        category_id: int,
+    ):
         """Creates a car instance"""
 
-        # create a name for the file
-        file_name = uuid4().__str__()
-
         try:
-            # make name validation
-            CarsValidator(name, model, brand).validate_unique_keys()
 
-            extension = file.filename[-4:]
-            file_name = file_name + extension
+            # make name validation
+            CarsValidator(title).validate_unique_keys()
+
+            extension = photo.filename[-4:]
+            file_name = FileManager.generate_new_protected_file_name(extension)
 
             # creates the instance of the car
             car = Cars(
-                name=name,
-                brand=brand,
-                model=model,
-                picture_s3_url="{}{}".format(app.config["S3_LOCATION"], file_name),
+                title=title,
+                description=description,
+                photo="{}{}".format(app.config["S3_LOCATION"], file_name),
+                year=int(year),
+                km=int(km),
+                city=str(city),
+                price=int(price),
+                category_id=int(category_id),
             )
             db.session.add(car)
 
         except Exception as e:
-            return False, {}
+            return False, {"error", e}
 
         else:
             # upload files to s3
             upload, file_url = FileManager.upload_file_to_s3(
-                file, file_name, bucket_name
+                photo, file_name, bucket_name
             )
 
             # save
@@ -69,11 +87,19 @@ class CarsService:
 
     @staticmethod
     def update_car_instance_by_id(
-        id: int, name: str, brand: str, model: str, file: dict
+        id: int,
+        title: str,
+        description: str,
+        photo: dict,
+        year: int,
+        km: int,
+        city: str,
+        price: int,
+        category_id: int,
     ):
         """Updates a car instance given its id"""
 
-        extension = file.filename[-4:]
+        extension = photo.filename[-4:]
         new_file_name = FileManager.generate_new_protected_file_name(extension)
 
         # get the current instance
@@ -83,19 +109,31 @@ class CarsService:
             return {}
 
         try:
-            if name:
-                car_obj.name = name
+            if title:
+                car_obj.title = title
 
-            if brand:
-                car_obj.brand = brand
+            if description:
+                car_obj.description = description
 
-            if model:
-                car_obj.model = model
+            if year:
+                car_obj.year = int(year)
 
-            if file:
-                old_file_name = car_obj.picture_s3_url.split(".com/")[1]
+            if km:
+                car_obj.km = int(km)
+
+            if city:
+                car_obj.city = city
+
+            if price:
+                car_obj.price = int(price)
+
+            if category_id:
+                car_obj.category_id = int(category_id)
+
+            if photo:
+                old_file_name = car_obj.photo.split(".com/")[1]
                 renewed, file_url = FileManager.renew_file_from_s3(
-                    file, old_file_name=old_file_name, new_file_name=new_file_name
+                    photo, old_file_name=old_file_name, new_file_name=new_file_name
                 )
 
             car_obj.picture_s3_url = file_url
@@ -106,7 +144,7 @@ class CarsService:
             return True, car_obj.to_json()
 
         except Exception as e:
-            return False, {}
+            return False, {"error", e}
 
     @staticmethod
     def delete_cat_instance_by_id(id):
@@ -121,4 +159,4 @@ class CarsService:
 
         except Exception as e:
             print("Erro", e)
-            return {}
+            return {"error", e}
