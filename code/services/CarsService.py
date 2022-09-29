@@ -130,13 +130,13 @@ class CarsService:
             if category_id:
                 car_obj.category_id = int(category_id)
 
-            if photo:
+            if photo != "":
                 old_file_name = car_obj.photo.split(".com/")[1]
                 renewed, file_url = FileManager.renew_file_from_s3(
                     photo, old_file_name=old_file_name, new_file_name=new_file_name
                 )
 
-            car_obj.picture_s3_url = file_url
+                car_obj.picture_s3_url = file_url
 
             db.session.add(car_obj)
             db.session.commit()

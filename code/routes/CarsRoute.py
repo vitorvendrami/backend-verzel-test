@@ -51,13 +51,12 @@ def register_car():
 @app.route("/cars/<id>", methods=["PUT"])
 def update_car(id):
 
-    if "photo" not in request.files:
-        return rp.generate_default_400_response(message="Missing picture!")
+    photo = "" if "photo" not in request.files else request.files["photo"]
 
     body = {
         "title": request.form.get("title", None),
         "description": request.form.get("description", None),
-        "photo": request.files["photo"],
+        "photo": photo,
         "year": request.form.get("year", None),
         "km": request.form.get("km", None),
         "city": request.form.get("city", None),
