@@ -31,23 +31,7 @@ class Cars(db.Model):
         return category
 
     def to_json(self):
-        """
-          {
-            "id": 4,
-            "title": "Mercedes Benz C 180 CGI EXCLUSIVE",
-            "description": "Macarrão spaghetti com frutos-do-mar e especíarias, especialidade da cozinha. Atenção: Contém camarão e outros frutos-do-mar!",
-            "photo": "https://images.kavak.services/br/assets/images/vip/badgets/svg/promotion-status.svg",
-            "year": 2015,
-            "km": 400,
-            "city": "São Paulo",
-            "price": 4,
-            "category": {
-              "id": 2,
-              "label": "SUV"
-            }
-          },
-        :return:
-        """
+        """JSON representation of the model"""
         return {
             "id": self.id,
             "title": self.title,
